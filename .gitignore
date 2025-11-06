@@ -6,3 +6,6 @@ __pycache__/
 *.pyo
 *.pyd
 *.so
+
+# Mock DB for Testing
+app.db
