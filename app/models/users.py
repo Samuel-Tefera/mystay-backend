@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 
 from app.database import Base
 
@@ -13,3 +14,5 @@ class HotelManager(Base):
   email = Column(String, nullable=False, unique=True)
   phone = Column(String, nullable=True)
   password = Column(String, nullable=True)
+
+  hotel = relationship('Hotel', back_populates='manager', uselist=False)
