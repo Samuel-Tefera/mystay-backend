@@ -1,5 +1,7 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from typing import Optional
+
+from app.schemas.room import RoomDisaply
 
 class Location(BaseModel):
   latitude: float
@@ -21,17 +23,15 @@ class HotelUpdate(BaseModel):
   name: Optional[str] = None
   description: Optional[str] = None
   address: Optional[str] = None
-  city: Optional[str] = None
-  country: Optional[str] = None
-  latitude: Optional[float] = None
-  longitude: Optional[float] = None
+  rating: Optional[float] = None
+  exact_location: Optional[Location] = None
   contact_number: Optional[str] = None
   email: Optional[str] = None
 
 class HotelDisplay(HotelBase):
   id: int
   manager_id: int
-  # rooms: list[Room] : []
+  rooms: Optional[list[RoomDisaply]] = []
 
   class config:
     orm_mode: True
