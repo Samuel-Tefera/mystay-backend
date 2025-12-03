@@ -25,8 +25,7 @@ class HotelManager(Base):
     name = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True, index=True)
     phone = Column(String, nullable=True)
-
-    is_approved = Column(Boolean, default=False) # Magic link authentication
+    password = Column(String, nullable=False)
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
