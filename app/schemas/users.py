@@ -10,7 +10,7 @@ class HotelManagerCreate(BaseModel):
   name: str
   email: str
   phone: str | None = None
-  password: str | None = None
+
 
 # Output Schema Hotel Manager
 class HotelManagerDisplay(BaseModel):
@@ -18,6 +18,7 @@ class HotelManagerDisplay(BaseModel):
   name: str
   email: str
   phone: str | None = None
+  is_approved: bool
   hotel: Optional[HotelDisplay] = None
 
   class Config:
@@ -37,3 +38,8 @@ class GuestDisplay(BaseModel):
 
   # class Config:
   #   orm_mode = True
+
+
+class AdminLogin(BaseModel):
+  email: str
+  password: str
