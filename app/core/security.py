@@ -14,24 +14,40 @@ def hash_password(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
-# JWT Token for Admin
+
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 1 day
 SECRET_KEY = os.getenv("ADMIN_SECRET_KEY", "supersecret123")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 1 day
 
+# Token generator
+def create_access_token(data: dict, expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=expires_minutes)
+    to_encode.update({"exp": expire})
+
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+# JWT Token for Admin
 def create_admin_token(admin):
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    payload = {
+    return create_access_token({
         "sub": str(admin.id),
         "email": admin.email,
         "role": "admin",
-        "exp": expire
-    }
+    })
 
-    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+# JWT Token for HotelManager
+def create_manager_token(manager):
+    return create_access_token({
+        "sub": str(manager.id),
+        "email": manager.email,
+        "role": "manager",
+    })
+
 
 # OAuth2 scheme to extract "Authorization: Bearer <token>"
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/admin/login")
+admin_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/admin/login")
+manager_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/hotelmanager/login")
 
 # Decode JWT
 def decode_token(token: str):
