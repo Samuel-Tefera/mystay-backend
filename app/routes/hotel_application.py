@@ -1,9 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
+
+from app.core.dependencies import require_admin
+
 from app.crud.hotel import create_new_hotel_application, get_all_hotel_applications, get_hotel_application_detail
 from app.database import get_db
-
+from app.models.hotel import Hotel
+from app.models.users import HotelManager
 from app.schemas.hotel import HotelApplicationCreate, HotelApplicationDetailDisplay, HotelApplicationDisplay
 
 
@@ -15,16 +19,16 @@ def create_application(new_application: HotelApplicationCreate, db: Session = De
   return create_new_hotel_application(db, new_application)
 
 # Get all applications
-@router.get('/', response_model=list[HotelApplicationDisplay])
+@router.get('/', response_model=list[HotelApplicationDisplay], dependencies=[Depends(require_admin)])
 def get_applications(db: Session = Depends(get_db)):
   return get_all_hotel_applications(db)
 
 # Get application detail
-@router.get('/{application_id}', response_model=HotelApplicationDetailDisplay)
-def get_application(application_id, db: Session = Depends(get_db)):
-  db_application = get_hotel_application_detail(db, application_id)
+@router.get('/{app_id}', response_model=HotelApplicationDetailDisplay, dependencies=[Depends(require_admin)])
+def get_application(app_id: int, db: Session = Depends(get_db)):
+  db_app = get_hotel_application_detail(db, app_id)
 
-  if not db_application:
-    raise HTTPException(status_code=404, detail='Application with this id not found')
+  if not db_app:
+    raise HTTPException(status_code=404, detail='Application not found')
 
-  return db_application
+  return db_app
