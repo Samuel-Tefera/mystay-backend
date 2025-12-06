@@ -16,10 +16,6 @@ class HotelBase(BaseModel):
   exact_location: Location
 
 
-class HotelCreate(HotelBase):
-  manager_id : int
-
-
 class HotelUpdate(BaseModel):
   name: Optional[str] = None
   description: Optional[str] = None
@@ -31,10 +27,13 @@ class HotelUpdate(BaseModel):
 class HotelDisplay(HotelBase):
   id: int
   manager_id: int
-  rooms: Optional[list[RoomDisaply]] = []
 
   class Config:
     orm_mode: True
+
+
+class HotelDisplayDetail(HotelDisplay):
+  rooms: list[RoomDisaply] = None
 
 
 class HotelApplicationBase(BaseModel):
