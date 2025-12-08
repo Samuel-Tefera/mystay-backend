@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
-from app.core.dependencies import require_hotel_manager
+
+from app.core.dependencies import require_admin, require_hotel_manager
 from app.core.security import create_manager_token, hash_password, verify_password
-from app.crud.users import create_hotel_manager, get_all_hotel_managers, get_hotel_manager
+from app.crud.users import get_all_hotel_managers, get_hotel_manager
 from app.database import get_db
 from app.models.users import HotelManager
-
-from app.schemas.users import HotelManagerCreate, HotelManagerDisplay, HotelManagerLogin, HotelManagerPasswordUpdate
+from app.schemas.users import HotelManagerDisplay, HotelManagerLogin, HotelManagerPasswordUpdate
 
 
 router = APIRouter(prefix='/hotelmanager', tags=['HotelManager'])
@@ -54,22 +54,17 @@ def update_password(
   return {'message': 'Password Successfully Updated'}
 
 
-# # Create Manager
-# @router.post('/', response_model=HotelManagerDisplay)
-# def create_manager(new_manager: HotelManagerCreate, db: Session = Depends(get_db)):
-#   return create_hotel_manager(db, new_manager)
+# Get all managers for Admin
+@router.get('/', response_model=list[HotelManagerDisplay], dependencies=[Depends(require_admin)])
+def get_managers(db: Session = Depends(get_db)):
+  return get_all_hotel_managers(db)
 
-# # Get all managers
-# @router.get('/', response_model=list[HotelManagerDisplay])
-# def get_managers(db: Session = Depends(get_db)):
-#   return get_all_hotel_managers(db)
+# Get one manager by ID for Admin
+@router.get('/{manager_id}', response_model=HotelManagerDisplay, dependencies=[Depends(require_admin)])
+def get_manager(manager_id: int, db: Session = Depends(get_db)):
+  db_manager = get_hotel_manager(db, manager_id)
 
-# # Get one manager by ID
-# @router.get('/{manager_id}', response_model=HotelManagerDisplay)
-# def get_manager(manager_id: int, db: Session = Depends(get_db)):
-#   db_manager = get_hotel_manager(db, manager_id)
+  if not db_manager:
+    raise HTTPException(status_code=404, detail='Manager not found')
 
-#   if not db_manager:
-#     raise HTTPException(status_code=404, detail='Manager not found')
-
-#   return db_manager
+  return db_manager
