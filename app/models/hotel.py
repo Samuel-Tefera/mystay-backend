@@ -1,4 +1,4 @@
-from sqlalchemy import JSON, Column, Float, ForeignKey, Integer, String, DateTime
+from sqlalchemy import JSON, Column, Float, ForeignKey, Integer, String, DateTime, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 
 from datetime import datetime
@@ -30,7 +30,7 @@ class HotelApplication(Base):
     hotel_star_rating = Column(Integer, nullable=True)
     hotel_exact_location = Column(JSON, nullable=False)
 
-    status = Column(String, default=ApplicationStatus.PENDING)
+    status = Column(SQLEnum(ApplicationStatus), default=ApplicationStatus.PENDING)
 
     created_at = Column(DateTime, default=datetime.utcnow)
 
