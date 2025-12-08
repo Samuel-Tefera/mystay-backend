@@ -10,7 +10,6 @@ class RoomBase(BaseModel):
   description: str
   bed_type: BedType
   image_url: str
-  available: bool
 
 
 class RoomUpdate(BaseModel):
@@ -20,7 +19,6 @@ class RoomUpdate(BaseModel):
   description: Optional[str] = None
   bed_type: Optional[BedType] = None
   image_url: Optional[str] = None
-  available: Optional[bool] = None
 
 
 class RoomDisaply(RoomBase):

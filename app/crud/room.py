@@ -15,7 +15,6 @@ def create_new_room(hotel_id, new_room: RoomBase, db: Session):
     description = new_room.description,
     bed_type = new_room.bed_type,
     image_url = new_room.image_url,
-    available = new_room.available,
   )
 
   db.add(db_room)
@@ -25,7 +24,9 @@ def create_new_room(hotel_id, new_room: RoomBase, db: Session):
   return db_room
 
 # Get all rooms for one hotel
-def get_all_rooms(hotel_id: int, db: Session):
+def get_all_rooms(db: Session, hotel_id: int = None):
+  if not hotel_id:
+    return db.query(Room).all()
   return db.query(Room).filter(Room.hotel_id == hotel_id)
 
 # get one room

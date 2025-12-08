@@ -29,7 +29,6 @@ class Room(Base):
   description = Column(String, nullable=True)
   bed_type = Column(SQLEnum(BedType), nullable=False, default=BedType.KING)
   image_url = Column(String, nullable=False)
-  available = Column(Boolean, nullable=False)
 
   hotel_id = Column(Integer, ForeignKey('hotels.id', ondelete='CASCADE'), nullable=False)
   hotel = relationship('Hotel', back_populates='rooms')
