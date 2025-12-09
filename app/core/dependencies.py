@@ -1,5 +1,5 @@
 from fastapi import Depends, HTTPException
-from app.core.security import decode_token, admin_oauth2_scheme, manager_oauth2_scheme
+from app.core.security import decode_token, admin_oauth2_scheme, manager_oauth2_scheme, guest_oauth2_scheme
 
 def require_admin(token: str = Depends(admin_oauth2_scheme)):
     payload = decode_token(token)
@@ -13,6 +13,14 @@ def require_hotel_manager(token: str = Depends(manager_oauth2_scheme)):
     payload = decode_token(token)
 
     if payload.get('role') != 'manager':
-        raise HTTPException(status_code=403, detail="Hotel Mangers only")
+        raise HTTPException(status_code=403, detail='Hotel Mangers only')
+
+    return payload
+
+def require_guest(token: str = Depends(guest_oauth2_scheme)):
+    payload = decode_token(token)
+
+    if payload.get('role') != 'guest':
+        raise HTTPException(status_code=403, detail='Guest only')
 
     return payload
