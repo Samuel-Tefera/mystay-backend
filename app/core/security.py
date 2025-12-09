@@ -31,23 +31,31 @@ def create_access_token(data: dict, expires_minutes: int = ACCESS_TOKEN_EXPIRE_M
 # JWT Token for Admin
 def create_admin_token(admin):
     return create_access_token({
-        "sub": str(admin.id),
-        "email": admin.email,
-        "role": "admin",
+        'sub': str(admin.id),
+        'email': admin.email,
+        'role': 'admin',
     })
 
 # JWT Token for HotelManager
 def create_manager_token(manager):
     return create_access_token({
-        "sub": str(manager.id),
-        "email": manager.email,
-        "role": "manager",
+        'sub': str(manager.id),
+        'email': manager.email,
+        'role': 'manager',
     })
 
+# JWT Token for Guest
+def create_guest_token(guest):
+    return create_access_token({
+    'sub': str(guest.id),
+    'email': guest.email,
+    'role': 'guest',
+})
 
 # OAuth2 scheme to extract "Authorization: Bearer <token>"
 admin_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/admin/login")
 manager_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/hotelmanager/login")
+guest_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/google/login")
 
 # Decode JWT
 def decode_token(token: str):
