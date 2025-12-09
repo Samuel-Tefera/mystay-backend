@@ -6,8 +6,6 @@ from app.core.dependencies import require_admin
 
 from app.crud.hotel import create_new_hotel_application, get_all_hotel_applications, get_hotel_application_detail
 from app.database import get_db
-from app.models.hotel import Hotel
-from app.models.users import HotelManager
 from app.schemas.hotel import HotelApplicationCreate, HotelApplicationDetailDisplay, HotelApplicationDisplay
 
 
