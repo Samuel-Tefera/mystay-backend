@@ -17,6 +17,7 @@ class BookingCreate(BookingBase):
 
 class BookingDisplay(BookingBase):
   id: int
+  room_id: int
   status: BookingStatus
   total_price: float
 
