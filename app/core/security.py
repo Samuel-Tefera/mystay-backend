@@ -53,9 +53,7 @@ def create_guest_token(guest):
 })
 
 # OAuth2 scheme to extract "Authorization: Bearer <token>"
-admin_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/admin/login")
-manager_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/hotelmanager/login")
-guest_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/google/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/auth/login')
 
 # Decode JWT
 def decode_token(token: str):
