@@ -6,7 +6,7 @@ from app.schemas.room import RoomBase
 
 
 # Creating new room for Hotel
-def create_new_room(hotel_id, new_room: RoomBase, db: Session):
+def create_new_room(hotel_id, new_room: RoomBase, image_url: str, db: Session):
   db_room = Room(
     hotel_id = hotel_id,
     room_number = new_room.room_number,
@@ -14,7 +14,7 @@ def create_new_room(hotel_id, new_room: RoomBase, db: Session):
     price_per_night = new_room.price_per_night,
     description = new_room.description,
     bed_type = new_room.bed_type,
-    image_url = new_room.image_url,
+    image_url = image_url,
   )
 
   db.add(db_room)
