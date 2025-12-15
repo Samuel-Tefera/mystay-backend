@@ -9,7 +9,6 @@ class RoomBase(BaseModel):
   price_per_night: float
   description: str
   bed_type: BedType
-  image_url: str
 
 
 class RoomUpdate(BaseModel):
@@ -18,12 +17,12 @@ class RoomUpdate(BaseModel):
   price_per_night: Optional[float] = None
   description: Optional[str] = None
   bed_type: Optional[BedType] = None
-  image_url: Optional[str] = None
 
 
 class RoomDisaply(RoomBase):
   id: int
   hotel_id: int
+  image_url: str
 
   class config:
     orm_mode = True
