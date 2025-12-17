@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from app.models.hotel import Hotel, HotelApplication
 
@@ -41,8 +42,18 @@ def get_hotel_application_detail(
   return db.query(HotelApplication).filter(HotelApplication.id == application_id).first()
 
 # Get all Hotels
-def get_all_hotels(db: Session):
-  return db.query(Hotel).all()
+def get_all_hotels(search: str | None, db: Session):
+  query = db.query(Hotel)
+
+  if search:
+    query = query.filter(
+        or_(
+            Hotel.name.ilike(f"%{search}%"),
+            Hotel.address.ilike(f"%{search}%"),
+        )
+    )
+
+  return query.all()
 
 # Get Hotel
 def get_one_hotel(

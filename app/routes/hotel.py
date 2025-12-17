@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from sqlalchemy.orm import Session
 
@@ -13,8 +14,14 @@ router = APIRouter(prefix='/hotels', tags=['Hotels'])
 
 # Get all Hotels
 @router.get('/', response_model=list[HotelDisplay])
-def get_hotels(db: Session = Depends(get_db)):
-  return get_all_hotels(db)
+def get_hotels(
+  search: str | None = Query(
+    default=None,
+    min_length=2,
+    description='Search by hotel name or address'
+  ),
+  db: Session = Depends(get_db)):
+  return get_all_hotels(search, db)
 
 # Get one Hotel by ID
 @router.get('/{hotel_id}', response_model=HotelDisplayDetail)
