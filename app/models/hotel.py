@@ -26,7 +26,7 @@ class HotelApplication(Base):
     # Hotel Info
     hotel_name = Column(String, nullable=False)
     hotel_description = Column(String, nullable=True)
-    hotel_address = Column(JSON, nullable=False)
+    hotel_address = Column(String, nullable=False)
     hotel_star_rating = Column(Integer, nullable=True)
     hotel_exact_location = Column(JSON, nullable=False)
 
