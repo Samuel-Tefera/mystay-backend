@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from fastapi import Depends, HTTPException
 
 from app.core.security import decode_token, oauth2_scheme
@@ -43,4 +45,7 @@ def require_guest_manager(
         status_code=401,
         detail='Guest or Hotel Manager authentication required',
     )
+
+load_dotenv()
+FRONTEND_RESET_PASSWORD_URL=os.getenv('FRONTEND_RESET_PASSWORD_URL')
 
