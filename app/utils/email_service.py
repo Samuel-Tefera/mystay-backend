@@ -78,3 +78,28 @@ Best regards,
     """
 
     _send_email(to_email, subject, body)
+
+def send_password_reset_email(to_email: str, reset_link: str):
+    subject = "Reset Your Password"
+
+    body = f"""
+        Hello,
+
+        You requested to reset your password.
+
+        Please click the link below to set a new password:
+        {reset_link}
+
+        This link will expire in 30 minutes.
+
+        If you did not request this, please ignore this email.
+
+        Best regards,
+        Support Team
+    """
+
+    _send_email(
+        to_email=to_email,
+        subject=subject,
+        body=body
+    )
