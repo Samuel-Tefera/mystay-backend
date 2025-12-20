@@ -1,3 +1,5 @@
+import hashlib
+import secrets
 from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
@@ -64,3 +66,11 @@ def decode_token(token: str):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token",
         )
+
+
+# Generate token for manager to reset password
+def generate_reset_token() -> str:
+    return secrets.token_urlsafe(32)
+
+def hash_token(token: str) -> str:
+    return hashlib.sha256(token.encode()).hexdigest()
