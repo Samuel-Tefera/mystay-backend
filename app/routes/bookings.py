@@ -166,7 +166,7 @@ def complete_booking(
   raise HTTPException(status_code=409, detail='Booking can not be confirmed')
 
 # Get all bookings for one hotel
-@router.get('hotels/{hotel_id}', response_model=list[BookingDisplay])
+@router.get('/hotels/{hotel_id}', response_model=list[BookingDisplay])
 def view_all_hotel_bookings(
   hotel_id: int,
   manager_data = Depends(require_hotel_manager),
