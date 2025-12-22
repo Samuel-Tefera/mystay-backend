@@ -1,3 +1,5 @@
+from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
@@ -17,9 +19,16 @@ def create_new_room(hotel_id, new_room: RoomBase, image_url: str, db: Session):
     image_url = image_url,
   )
 
-  db.add(db_room)
-  db.commit()
-  db.refresh(db_room)
+  try:
+    db.add(db_room)
+    db.commit()
+    db.refresh(db_room)
+  except IntegrityError:
+    db.rollback()
+    raise HTTPException(
+        status_code=409,
+        detail='Room number already exsits for this hotel'
+      )
 
   return db_room
 
