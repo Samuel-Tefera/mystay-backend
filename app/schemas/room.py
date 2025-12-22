@@ -19,10 +19,19 @@ class RoomUpdate(BaseModel):
   bed_type: Optional[BedType] = None
 
 
+class HotelView(BaseModel):
+  id: int
+  name: str
+  rating: int
+  address: str
+
+
 class RoomDisaply(RoomBase):
   id: int
   hotel_id: int
   image_url: str
+
+  hotel: HotelView
 
   class config:
     orm_mode = True
