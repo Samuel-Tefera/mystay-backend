@@ -1,9 +1,12 @@
+from datetime import date, timedelta
+
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import require_hotel_manager
 from app.crud.room import create_new_room, get_all_rooms, get_one_room
+from app.models.bookings import Booking, BookingStatus
 from app.models.hotel import Hotel
 from app.models.room import BedType, Room, RoomType
 from app.schemas.room import RoomBase, RoomDisaply, RoomUpdate
@@ -29,7 +32,11 @@ def get_room(hotel_id, room_id, db: Session = Depends(get_db)):
   return get_one_room(hotel_id, room_id, db)
 
 # Create new room for Hotel
-@router.post('/{hotel_id}/rooms', response_model=RoomDisaply, dependencies=[Depends(require_hotel_manager)])
+@router.post(
+  '/{hotel_id}/rooms',
+  response_model=RoomDisaply,
+  dependencies=[Depends(require_hotel_manager)]
+)
 def create_room(
   hotel_id: int,
   room_number: str = Form(...),
@@ -104,4 +111,34 @@ def delete_room(
   db.commit()
   return {
     'message': 'Room successfully removed.'
+  }
+
+@router.get('/rooms/{room_id}/unavailable-dates')
+def get_unavailable_dates(room_id: int, db: Session = Depends(get_db)):
+  today = date.today()
+
+  bookings = (
+    db.query(Booking).filter(
+      Booking.room_id == room_id,
+      Booking.status.in_([
+        BookingStatus.PENDING,
+        BookingStatus.CONFIRMED
+      ]),
+      Booking.check_out >= today
+    ).all()
+  )
+
+  unavailable_dates = set()
+
+  for booking in bookings:
+    start_date = max(booking.check_in, today)
+    current_date = start_date
+
+    while current_date <= booking.check_out:
+      unavailable_dates.add(current_date.isoformat())
+      current_date += timedelta(days=1)
+
+  return {
+    "room_id" : room_id,
+    "unavailable_dates": sorted(unavailable_dates)
   }
