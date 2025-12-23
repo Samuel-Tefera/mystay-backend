@@ -1,4 +1,3 @@
-from os import access
 from typing import Optional
 
 from urllib.parse import urlparse
@@ -12,7 +11,6 @@ from app.core.auth import oauth
 from app.core.security import create_guest_token
 from app.database import get_db
 from app.models.users import Guest
-from app.schemas.users import GuestDisplay
 
 router = APIRouter(prefix='/auth/google', tags=['Google OAuth'])
 
