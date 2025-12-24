@@ -53,17 +53,21 @@ class HotelManagerResetPassword(BaseModel):
   new_password: str
   token: str
 
-# Guest Output
-class GuestDisplay(BaseModel):
+
+class SimpleGuestView(BaseModel):
   id: int
-  email: str
   full_name: str
-  avater_url: str
-  created_at: datetime
+  email: str
 
   model_config = {
     'from_attributes': True
   }
 
-  # class Config:
-  #   orm_mode = True
+
+# Guest Output
+class GuestDisplay(SimpleGuestView):
+  id: int
+  email: str
+  full_name: str
+  avater_url: str
+  created_at: datetime
