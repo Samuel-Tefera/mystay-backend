@@ -1,14 +1,19 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from sqlalchemy import select, func, distinct
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import FRONTEND_RESET_PASSWORD_URL, require_admin, require_hotel_manager
 from app.core.security import create_manager_token, generate_reset_token, hash_password, hash_token, verify_password
 from app.crud.users import get_all_hotel_managers, get_hotel_manager
 from app.database import get_db
+from app.models.bookings import Booking
+from app.models.hotel import Hotel
 from app.models.password_reset import PasswordResetToken
+from app.models.payments import Payment, PaymentStatus
+from app.models.room import Room
 from app.models.users import HotelManager
 from app.schemas.users import HotelManagerDisplay, HotelManagerForgetPassword, HotelManagerLogin, HotelManagerPasswordUpdate, HotelManagerResetPassword
 from app.utils.email_service import send_password_reset_email
@@ -32,6 +37,59 @@ def hotel_manager_login(credentials: HotelManagerLogin, db: Session = Depends(ge
     "manager_id": manager.id,
     "manager_name": manager.name,
     "manager_email": manager.email,
+  }
+
+
+# Hotel Dashboard for Hotel Manager
+@router.get('/dashboard')
+def get_hotel_dashboard(
+  db: Session = Depends(get_db),
+  manager_data = Depends(require_hotel_manager)
+):
+
+  # Manager Hotel
+  hotel = db.query(Hotel).filter(Hotel.manager_id == int(manager_data['sub'])).first()
+
+  # Total Rooms
+  stmt = select(func.count(Room.id)).where(Room.hotel_id == hotel.id)
+  total_rooms = db.execute(stmt).scalar() or 0
+
+  # Total Bookings
+  stmt = select(func.count(Booking.id)).where(Booking.hotel_id == hotel.id)
+  total_bookings = db.execute(stmt).scalar() or 0
+
+  # Occupied Rooms
+  today = date.today()
+  occupied_rooms = db.query(
+      func.count(distinct(Booking.room_id))
+    ).filter(
+        Booking.status == "CONFIRMED",
+        Booking.check_in <= today,
+        Booking.check_out > today
+    ).scalar()
+
+  # Total Sales
+  stmt = select(Booking.id)
+  booking_ids = db.execute(stmt).scalars().all()
+
+  total_sales = db.query(
+    func.sum(Payment.amount)
+  ).filter(
+    Payment.status == PaymentStatus.PAID,
+    Payment.booking_id.in_(booking_ids)
+  ).scalar()
+
+  return {
+    'hotels': {
+      'id': hotel.id,
+      'name': hotel.name
+    },
+    'stats': {
+      'total_rooms': total_rooms,
+      'total_bookings': total_bookings,
+      'occupied_rooms': occupied_rooms,
+      'total_sales': total_sales,
+    }
   }
 
 
